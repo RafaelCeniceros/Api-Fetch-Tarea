@@ -11,22 +11,43 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="cardStyle.css" />
+    <link rel="stylesheet" href="styles.css" />
+
 </head>
 
 <body>
 
     <main>
-        <div class="container">
+        <div class="container d-flex justify-content-center align-items-center mt-3">
             <h5>JS07 - API Fetch</h5>
         </div>
-    </main>
 
+        <div class="align-items-center justify-content-center" id="preloader">
+            <div class="spinner"></div>
+            <h6 class="mx-3">Espere un momento</h6> 
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center my-2">
+            <button type="button" class="btn btn-outline-primary" id="btnObtenerUsuarios">Obtener Usuarios</button>
+        </div>    
+
+        <div class="slide-container swiper">
+            <div class="slide-content">
+                <div class="card-wrapper swiper-wrapper row" id="users-container">
+
+                </div>
+            </div>
+        </div>
+    </main>
     <!-- Bootstrap JavaScript Libraries -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
     <script src="main.js"></script>
+
 </body>
 
 </html>
