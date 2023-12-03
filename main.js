@@ -1,32 +1,61 @@
-console.log("Estoy conectado al html");
-
+console.log("Estoy conectado al HTML");
 
 const urlAPI = "https://reqres.in/api/users?delay=3";
+const localStorageKey = "userData";
+const btnGetUsers = document.getElementById("btnObtenerUsuarios");
+const localStorageTimeLimit_s = 60; //tiempo de vida limite del localStorage en segundos
+const sourceHTML = document.getElementById("source");
 
-const getProducts = (url) => {
+// Agrega un evento de clic al botón
+btnGetUsers.addEventListener("click", function () {
+    // Llama a la función getProducts al hacer clic en el botón
+    getUsers(urlAPI);
+});
+
+const getUsers = (url) => {
     document.getElementById("preloader").style.display = "flex";
-    // Realizando solicitud Get
+    sourceHTML.innerHTML = "";
+    // Limpiar el contenido del DOM
+    clearDOMContent();
+    // Verificar si hay datos en el Local Storage y si han pasado más de 10 segundos
+    const storedData = JSON.parse(localStorage.getItem(localStorageKey));
+    //tiempo que ha transcurrido desde que se presionó el botón
+    const timeSinceBtn_s = Math.round((Date.now() - storedData.timestamp) / 1000);
+    //si hay informacion en el localStorage y el tiempo que ha transcurrido desde que se presionó el botón es menor tiempo de vida limite del localStorage en segundos 
+    if (storedData && (timeSinceBtn_s < localStorageTimeLimit_s)) {
+        // Leer desde el Local Storage si está dentro del límite de tiempo
+        console.log("Recuperando datos desde el Local Storage");
+        sourceHTML.innerHTML = "Datos recuperados desde el Local Storage. Se obtendrá del API en: " + (localStorageTimeLimit_s - timeSinceBtn_s) + " segundos";
+        console.log("Tiempo transcurrido: " + timeSinceBtn_s + " segundos");
+        printOnDOM(storedData.data);
+        /// Mantener el preloader oculto.
+        document.getElementById("preloader").style.display = "none";
+        return;
+    }
+    // Realizando solicitud GET
     fetch(url)
         .then((response) => {
-            if (response.status == 200) {
-                console.log("status of request: OK"); // Confirmar estado solicitud 
+            if (response.status === 200) {
+                console.log("Estado de la solicitud: OK");
                 return response.json();
             }
         })
-        .then(users => {
+        .then((users) => {
+            // Guardar en el Local Storage con la marca de tiempo
+            const timestamp = Date.now();
+            const dataToStore = { data: users.data, timestamp: timestamp };
+            localStorage.setItem(localStorageKey, JSON.stringify(dataToStore));
             // Ocultar el preloader después de recibir la respuesta
-            document.getElementById("preloader").style.display = "none"
-            console.log(users.data); //array con 6 usuarios
+            document.getElementById("preloader").style.display = "none";
+            sourceHTML.innerHTML = "Datos obtenidos del API";
+            console.table(dataToStore); // array con 6 usuarios
             printOnDOM(users.data);
-
         })
         .catch((error) => {
-            console.log("Error en la solicitud:");
-            console.warn(error);
+            console.log("Error en la solicitud:", error);
             console.warn("Estado de la respuesta:", error.status);
-            console.warn("Texto de estado:", error.statusText);
             // Ocultar el preloader en caso de error
-                    document.getElementById("preloader").style.display = "none";
+            document.getElementById("preloader").style.display = "none";
         });
 };
 
@@ -50,6 +79,13 @@ function generateUserCard({ avatar, first_name, last_name, email }) {
 </div>
     `;
 }
+function clearDOMContent() {
+    // Obtener el contenedor de usuarios y establecer su contenido en blanco
+    const usersContainer = document.getElementById("users-container");
+    if (usersContainer) {
+        usersContainer.innerHTML = "";
+    }
+}
 
 function printOnDOM(users) {
     const usersContainer = document.getElementById("users-container");
@@ -62,14 +98,5 @@ function printOnDOM(users) {
     const userHTML = users.map(generateUserCard);
     usersContainer.innerHTML = userHTML.join("");
 }
-
-
-const btnGetUsers = document.getElementById("btnObtenerUsuarios");
-
-// Agrega un evento de clic al botón
-btnObtenerUsuarios.addEventListener("click", function () {
-    // Llama a la función getProducts al hacer clic en el botón
-    getProducts(urlAPI);
-});
 
 
