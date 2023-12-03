@@ -19,6 +19,8 @@ const getUsers = (url) => {
     clearDOMContent();
     // Verificar si hay datos en el Local Storage y si han pasado más de 10 segundos
     const storedData = JSON.parse(localStorage.getItem(localStorageKey));
+    if(storedData)
+    {
     //tiempo que ha transcurrido desde que se presionó el botón
     const timeSinceBtn_s = Math.round((Date.now() - storedData.timestamp) / 1000);
     //si hay informacion en el localStorage y el tiempo que ha transcurrido desde que se presionó el botón es menor tiempo de vida limite del localStorage en segundos 
@@ -31,6 +33,7 @@ const getUsers = (url) => {
         /// Mantener el preloader oculto.
         document.getElementById("preloader").style.display = "none";
         return;
+    }
     }
     // Realizando solicitud GET
     fetch(url)
